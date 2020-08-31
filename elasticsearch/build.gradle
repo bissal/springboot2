@@ -21,6 +21,10 @@ dependencies {
     runtimeOnly 'com.h2database:h2'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
+    // elasticsearch
+    implementation 'org.elasticsearch:elasticsearch:7.6.2'
+    implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.6.2'
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
