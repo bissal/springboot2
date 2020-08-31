@@ -1,7 +1,9 @@
 package io.bissal.spring.elastic.test.restclient;
 
 import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.junit.jupiter.api.Test;
@@ -22,6 +24,14 @@ public class EsRestClientTest {
     @Test
     public void testHighLevelClient() throws IOException {
         SearchRequest request = new SearchRequest("metricbeat-*").types("info");
+        SearchResponse sr = client.search(request, RequestOptions.DEFAULT);
+        System.out.println(sr.toString());
+    }
+
+    @Test
+    public void testSearch() throws IOException {
+        SearchRequest request = new SearchRequest("metricbeat-*").searchType(SearchType.DEFAULT);
+
         SearchResponse sr = client.search(request, RequestOptions.DEFAULT);
         System.out.println(sr.toString());
     }
