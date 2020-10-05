@@ -1,9 +1,13 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+#    url: jdbc:h2:mem:testdb
+#    driver-class-name: org.h2.Driver
+#    username: sa
+#    password:
+    url: jdbc:oracle:thin:@localhost:1521:xe
+    driver-class-name: oracle.jdbc.OracleDriver
+    username: dev_user
+    password: dev_user
   h2:
     console:
       enabled: true
@@ -26,3 +30,6 @@ logging:
         type:
           descriptor:
             sql: trace
+
+server:
+  port: 8088
