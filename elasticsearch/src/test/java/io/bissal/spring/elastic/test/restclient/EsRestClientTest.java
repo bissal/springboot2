@@ -6,6 +6,9 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +37,20 @@ public class EsRestClientTest {
 
         SearchResponse sr = client.search(request, RequestOptions.DEFAULT);
         System.out.println(sr.toString());
+    }
+
+    @Test
+    public void testSearchLast() throws IOException {
+        SearchSourceBuilder builder = new SearchSourceBuilder();
+        builder.query(QueryBuilders.matchAllQuery());
+        builder.size(1);
+        builder.sort("@timestamp", SortOrder.DESC);
+
+        SearchRequest request = new SearchRequest("metricbeat-*");
+        request.source(builder);
+
+        SearchResponse response = client.search(request, RequestOptions.DEFAULT);
+        System.out.println(response.toString());
     }
 
 }
