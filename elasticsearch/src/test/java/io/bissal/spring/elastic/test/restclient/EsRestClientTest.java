@@ -6,6 +6,8 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.unit.Fuzziness;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortOrder;
@@ -43,6 +45,26 @@ public class EsRestClientTest {
     public void testSearchLast() throws IOException {
         SearchSourceBuilder builder = new SearchSourceBuilder();
         builder.query(QueryBuilders.matchAllQuery());
+        builder.size(1);
+        builder.sort("@timestamp", SortOrder.DESC);
+
+        SearchRequest request = new SearchRequest("metricbeat-*");
+        request.source(builder);
+
+        SearchResponse response = client.search(request, RequestOptions.DEFAULT);
+        System.out.println(response.toString());
+    }
+
+    @Test
+    public void testSearchLastById() throws IOException {
+        SearchSourceBuilder builder = new SearchSourceBuilder();
+
+        QueryBuilder matchQuery = QueryBuilders.matchQuery("process.name", "metricbeat")
+                .fuzziness(Fuzziness.AUTO)
+                .prefixLength(3)
+                .maxExpansions(10);
+
+        builder.query(matchQuery);
         builder.size(1);
         builder.sort("@timestamp", SortOrder.DESC);
 
