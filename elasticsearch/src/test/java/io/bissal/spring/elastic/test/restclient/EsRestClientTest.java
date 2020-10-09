@@ -1,5 +1,6 @@
 package io.bissal.spring.elastic.test.restclient;
 
+import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -34,6 +35,13 @@ public class EsRestClientTest {
 
         SearchResponse sr = client.search(request, RequestOptions.DEFAULT);
         System.out.println(sr.toString());
+    }
+
+    @Test
+    public void testIndex() {
+//        IndexRequest request = new IndexRequest("metricbeat-*");
+//
+//        client.
     }
 
 }
