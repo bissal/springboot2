@@ -23,5 +23,6 @@ public class SwitchoverController {
     @GetMapping("/status")
     public String status() {
         service.findLastEntry();
+        return null;
     }
 }
