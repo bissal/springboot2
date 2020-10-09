@@ -1,0 +1,35 @@
+spring:
+  datasource:
+#    url: jdbc:h2:mem:testdb
+#    driver-class-name: org.h2.Driver
+#    username: sa
+#    password:
+    url: jdbc:oracle:thin:@localhost:1521:xe
+    driver-class-name: oracle.jdbc.OracleDriver
+    username: dev_user
+    password: dev_user
+  h2:
+    console:
+      enabled: true
+  jpa:
+    show-sql: true
+    hibernate:
+#      ddl-auto: create-drop
+      ddl-auto: none
+      format_sql: true
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+
+elasticsearch:
+  hosts: http://20.194.41.183:9200
+
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql: trace
+
+server:
+  port: 8088
