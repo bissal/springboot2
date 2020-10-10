@@ -9,6 +9,8 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.RangeQueryBuilder;
+import org.elasticsearch.index.query.WildcardQueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.junit.jupiter.api.Test;
@@ -64,12 +66,49 @@ public class EsRestClientTest {
                 .prefixLength(3)
                 .maxExpansions(10);
 
+        String[] includeFields = new String[] {"system.process.cmdline","agent.*"};
+        String[] excludeFields = new String[] {"user"};
+
+        builder.fetchSource(includeFields, excludeFields);
         builder.query(matchQuery);
-        builder.size(1);
+        builder.size(10);
         builder.sort("@timestamp", SortOrder.DESC);
 
         SearchRequest request = new SearchRequest("metricbeat-*");
         request.source(builder);
+
+        SearchResponse response = client.search(request, RequestOptions.DEFAULT);
+        System.out.println(response.toString());
+    }
+
+    @Test
+    public void testSearchLastByProcessNames() throws IOException {
+        WildcardQueryBuilder wildcardQueryBuilder = QueryBuilders.wildcardQuery("system.process.cmdline", "*metric*");
+        WildcardQueryBuilder wildcardQueryBuilder1 = QueryBuilders.wildcardQuery("system.process.cmdline", "*python*");
+
+        RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery("@timestamp")
+                .gte("now-50h/h")
+                .lte("now-1h/h")
+                ;
+
+        QueryBuilder boolQueryBuilder = QueryBuilders.boolQuery()
+                .should(wildcardQueryBuilder)
+                .should(wildcardQueryBuilder1)
+                .should(rangeQueryBuilder)
+                ;
+
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+        sourceBuilder.query(boolQueryBuilder);
+
+        String[] includeFields = new String[] {"system.process","process","host"};
+        String[] excludeFields = new String[] {};
+        sourceBuilder.fetchSource(includeFields, excludeFields);
+
+        sourceBuilder.size(10);
+        sourceBuilder.sort("@timestamp", SortOrder.DESC);
+
+        SearchRequest request = new SearchRequest("metricbeat-*");
+        request.source(sourceBuilder);
 
         SearchResponse response = client.search(request, RequestOptions.DEFAULT);
         System.out.println(response.toString());
