@@ -1,6 +1,7 @@
 package io.bissal.spring.elastic.test.service;
 
 import io.bissal.spring.elastic.test.model.elastic.server.Server;
+import io.bissal.spring.elastic.test.model.elastic.server.ServerDetail;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +22,10 @@ public class StatusServiceTest {
         String hostId = "b2211d793fb547419243109dc1f3c0af";
 
         // when
-        List<String> status = service.status(hostId);
+        ServerDetail status = service.serverDetail(hostId);
 
         // then
-        for (String processCmdLine : status) {
-            System.out.println(processCmdLine);
-        }
+        System.out.println(status);
     }
 
     @Test

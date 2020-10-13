@@ -8,6 +8,7 @@ import io.bissal.spring.elastic.test.component.ElasticRestClient;
 import io.bissal.spring.elastic.test.component.MemSearchRequestBuilder;
 import io.bissal.spring.elastic.test.model.elastic.cpu.Cpu;
 import io.bissal.spring.elastic.test.model.elastic.mem.Memory;
+import io.bissal.spring.elastic.test.model.elastic.server.CpuAndMem;
 import io.bissal.spring.elastic.test.model.elastic.server.Server;
 import org.elasticsearch.action.search.MultiSearchRequest;
 import org.elasticsearch.action.search.MultiSearchResponse;
@@ -29,7 +30,7 @@ public class CpuAndMemDao {
     @Autowired
     private MemSearchRequestBuilder memSearchRequestBuilder;
 
-    public Server stat(String hostId) {
+    public CpuAndMem stat(String hostId) {
         SearchRequest requestCpu = cpuSearchRequestBuilder.searchRequest(hostId);
         SearchRequest requestMem = memSearchRequestBuilder.searchRequest(hostId);
 
@@ -39,20 +40,18 @@ public class CpuAndMemDao {
 
         MultiSearchResponse response = client.multiSearch(multiRequest, RequestOptions.DEFAULT);
 
-        Server server = null;
+        CpuAndMem cpuAndMem = null;
         try {
-            server = extract(response);
+            cpuAndMem = extract(response);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 
-        server.setId(hostId);
-
-        return server;
+        return cpuAndMem;
     }
 
-    private Server extract(MultiSearchResponse response) throws JsonProcessingException {
-        Server server = new Server();
+    private CpuAndMem extract(MultiSearchResponse response) throws JsonProcessingException {
+        CpuAndMem cpuAndMem = new CpuAndMem();
 
         MultiSearchResponse.Item[] responses = response.getResponses();
         for (MultiSearchResponse.Item item : responses) {
@@ -64,16 +63,16 @@ public class CpuAndMemDao {
                 if (!jsonNode.findPath("cpu").isEmpty()) {
                     JsonNode cpuNode = jsonNode.findPath("cpu");
                     Cpu cpu = mapper.treeToValue(cpuNode, Cpu.class);
-                    server.setCpu(cpu);
+                    cpuAndMem.setCpu(cpu);
                 }
                 if (!jsonNode.findPath("memory").isEmpty()) {
                     JsonNode memNode = jsonNode.findPath("memory");
                     Memory mem = mapper.treeToValue(memNode, Memory.class);
-                    server.setMemory(mem);
+                    cpuAndMem.setMemory(mem);
                 }
             }
         }
 
-        return server;
+        return cpuAndMem;
     }
 }

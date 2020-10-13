@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.bissal.spring.elastic.test.component.ElasticRestClient;
 import io.bissal.spring.elastic.test.model.elastic.cpu.Cpu;
 import io.bissal.spring.elastic.test.model.elastic.mem.Memory;
+import io.bissal.spring.elastic.test.model.elastic.server.CpuAndMem;
 import io.bissal.spring.elastic.test.model.elastic.server.Server;
 import org.elasticsearch.action.search.MultiSearchResponse;
 import org.elasticsearch.common.document.DocumentField;
@@ -35,9 +36,9 @@ public class CpuAndMemDaoTest {
         String hostId = "b2211d793fb547419243109dc1f3c0af";
 
         // when
-        Server server = dao.stat(hostId);
+        CpuAndMem cpuAndMem = dao.stat(hostId);
 
         // then
-        System.out.println(server);
+        System.out.println(cpuAndMem);
     }
 }

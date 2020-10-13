@@ -1,6 +1,7 @@
 package io.bissal.spring.elastic.test.controller;
 
 import io.bissal.spring.elastic.test.model.elastic.server.Server;
+import io.bissal.spring.elastic.test.model.elastic.server.ServerDetail;
 import io.bissal.spring.elastic.test.service.StatusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,9 +21,9 @@ public class StatusController {
     private StatusService statusService;
 
     @GetMapping("/detail")
-    public ResponseEntity<String> processes(@RequestParam String serverHostId) {
-        List<String> statusList =  statusService.status(serverHostId);
-        String response = statusList.toString();
+    public ResponseEntity<String> serverDetail(@RequestParam String serverHostId) {
+        ServerDetail serverDetail =  statusService.serverDetail(serverHostId);
+        String response = serverDetail.toString();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
