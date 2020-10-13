@@ -22,37 +22,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class EsClientService {
+public class StatusService {
     public static final String TERM_NAME_PROCESSES = "each-processes";
     public static final String TERM_NAME_SERVERS = "each-server";
 
     @Autowired
     private ElasticRestClient esRestClient;
-
-    public SearchResponse eachStatus(String hostId) {
-        MatchQueryBuilder matchQuery = QueryBuilders.matchQuery("host.id", hostId);
-        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().must(matchQuery);
-
-        TermsAggregationBuilder termsAggregation
-                = AggregationBuilders
-                .terms(TERM_NAME_PROCESSES)
-                .field("system.process.cmdline");
-
-        String[] includeFields = new String[] {"system.process.cmdline"};
-        String[] excludeFields = new String[] {};
-
-        SearchSourceBuilder search = new SearchSourceBuilder();
-        search.query(boolQuery);
-        search.aggregation(termsAggregation);
-        search.fetchSource(includeFields, excludeFields);
-        search.size(0);
-
-        SearchRequest request = new SearchRequest("metricbeat-*");
-        request.source(search);
-
-        SearchResponse response = esRestClient.search(request, RequestOptions.DEFAULT);
-        return response;
-    }
 
     public List<String> status(String hostId) {
         MatchQueryBuilder matchQuery = QueryBuilders.matchQuery("host.id", hostId);

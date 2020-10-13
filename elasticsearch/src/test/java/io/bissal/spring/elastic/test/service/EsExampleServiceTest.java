@@ -20,35 +20,9 @@ import java.util.Map;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class EsClientServiceTest {
+public class EsExampleServiceTest {
     @Autowired
-    EsClientService service;
-
-    @Test
-    public void testStatus() {
-        // given
-        String hostId = "b2211d793fb547419243109dc1f3c0af";
-
-        // when
-        List<String> status = service.status(hostId);
-
-        // then
-        for (String processCmdLine : status) {
-            System.out.println(processCmdLine);
-        }
-    }
-
-    @Test
-    public void testList() {
-        // when
-        List<String> list = service.list();
-
-        // then
-        for (String hostId :
-                list) {
-            System.out.println(hostId);
-        }
-    }
+    EsExampleService service;
 
     @Test
     public void test() {
