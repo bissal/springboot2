@@ -64,13 +64,11 @@ public class CpuAndMemDao {
                 if (!jsonNode.findPath("cpu").isEmpty()) {
                     JsonNode cpuNode = jsonNode.findPath("cpu");
                     Cpu cpu = mapper.treeToValue(cpuNode, Cpu.class);
-                    System.out.println(cpu);
                     server.setCpu(cpu);
                 }
                 if (!jsonNode.findPath("memory").isEmpty()) {
                     JsonNode memNode = jsonNode.findPath("memory");
                     Memory mem = mapper.treeToValue(memNode, Memory.class);
-                    System.out.println(mem);
                     server.setMemory(mem);
                 }
             }
