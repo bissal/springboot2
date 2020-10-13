@@ -18,7 +18,7 @@ public class StatusController {
     @Autowired
     private EsClientService esClientService;
 
-    @GetMapping("/processes")
+    @GetMapping("/detail")
     public ResponseEntity<String> processes(@RequestParam String serverHostId) {
         List<String> statusList =  esClientService.status(serverHostId);
         String response = statusList.toString();
