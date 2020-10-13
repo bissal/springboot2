@@ -61,45 +61,11 @@ public class StatusService {
         List<String> serverIds = searchEachServers();
         List<Server> servers = new ArrayList<>();
         for (String hostId : serverIds) {
-//            searchCpuMemOfServer(hostId);
             Server server = cpuAndMemDao.stat(hostId);
             servers.add(server);
         }
 
         return servers;
-    }
-
-    public List<String> searchCpuMemOfServer(String hostId) {
-        MatchQueryBuilder matchQuery = QueryBuilders.matchQuery("host.id", hostId);
-
-        RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery("@timestamp")
-                .gte("now-10h/h")
-                .lte("now")
-                ;
-
-        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
-                .must(matchQuery)
-                .must(rangeQueryBuilder);
-
-        String[] includeFields = new String[] {"system.cpu"};
-        String[] excludeFields = new String[] {};
-
-        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-        sourceBuilder.fetchSource(includeFields, excludeFields);
-        sourceBuilder.query(boolQuery);
-        sourceBuilder.size(1);
-        sourceBuilder.sort("@timestamp", SortOrder.DESC);
-
-        SearchRequest request = new SearchRequest("metricbeat-*");
-        request.source(sourceBuilder);
-
-        MultiSearchRequest multiRequest = new MultiSearchRequest();
-        multiRequest.add(request);
-
-        MultiSearchResponse multiSearchResponse = esRestClient.multiSearch(multiRequest, RequestOptions.DEFAULT);
-        System.out.println(multiSearchResponse);
-
-        return null;
     }
 
     public List<String> searchEachServers() {
