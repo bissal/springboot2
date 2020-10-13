@@ -83,10 +83,7 @@ public class EsClientService {
         MatchQueryBuilder matchQuery = QueryBuilders.matchQuery("host.id", hostId);
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().must(matchQuery);
 
-
-
-
-
+        return null;
     }
 
     public List<String> searchEachServers() {
