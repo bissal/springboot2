@@ -1,6 +1,8 @@
 package io.bissal.spring.elastic.test.service;
 
 import io.bissal.spring.elastic.test.component.ElasticRestClient;
+import io.bissal.spring.elastic.test.dao.CpuAndMemDao;
+import io.bissal.spring.elastic.test.model.elastic.server.Server;
 import org.elasticsearch.action.search.MultiSearchRequest;
 import org.elasticsearch.action.search.MultiSearchResponse;
 import org.elasticsearch.action.search.SearchRequest;
@@ -29,6 +31,9 @@ public class StatusService {
     @Autowired
     private ElasticRestClient esRestClient;
 
+    @Autowired
+    private CpuAndMemDao cpuAndMemDao;
+
     public List<String> status(String hostId) {
         MatchQueryBuilder matchQuery = QueryBuilders.matchQuery("host.id", hostId);
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().must(matchQuery);
@@ -52,10 +57,13 @@ public class StatusService {
         return processes;
     }
 
-    public List<String> list() {
-        List<String> servers = searchEachServers();
-        for (String hostId : servers) {
-            searchCpuMemOfServer(hostId);
+    public List<Server> list() {
+        List<String> serverIds = searchEachServers();
+        List<Server> servers = new ArrayList<>();
+        for (String hostId : serverIds) {
+//            searchCpuMemOfServer(hostId);
+            Server server = cpuAndMemDao.stat(hostId);
+            servers.add(server);
         }
 
         return servers;

@@ -1,5 +1,6 @@
 package io.bissal.spring.elastic.test.controller;
 
+import io.bissal.spring.elastic.test.model.elastic.server.Server;
 import io.bissal.spring.elastic.test.service.StatusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,10 +28,9 @@ public class StatusController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<String> list() {
-        List<String> list = statusService.list();
-        String response = list.toString();
+    public ResponseEntity<List<Server>> list() {
+        List<Server> list = statusService.list();
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
 }

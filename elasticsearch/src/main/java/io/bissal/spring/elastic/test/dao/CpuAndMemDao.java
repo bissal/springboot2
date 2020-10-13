@@ -1,12 +1,20 @@
 package io.bissal.spring.elastic.test.dao;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.bissal.spring.elastic.test.component.CpuSearchRequestBuilder;
 import io.bissal.spring.elastic.test.component.ElasticRestClient;
 import io.bissal.spring.elastic.test.component.MemSearchRequestBuilder;
+import io.bissal.spring.elastic.test.model.elastic.cpu.Cpu;
+import io.bissal.spring.elastic.test.model.elastic.mem.Memory;
+import io.bissal.spring.elastic.test.model.elastic.server.Server;
 import org.elasticsearch.action.search.MultiSearchRequest;
 import org.elasticsearch.action.search.MultiSearchResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -21,7 +29,7 @@ public class CpuAndMemDao {
     @Autowired
     private MemSearchRequestBuilder memSearchRequestBuilder;
 
-    public MultiSearchResponse stat(String hostId) {
+    public Server stat(String hostId) {
         SearchRequest requestCpu = cpuSearchRequestBuilder.searchRequest(hostId);
         SearchRequest requestMem = memSearchRequestBuilder.searchRequest(hostId);
 
@@ -31,6 +39,43 @@ public class CpuAndMemDao {
 
         MultiSearchResponse response = client.multiSearch(multiRequest, RequestOptions.DEFAULT);
 
-        return response;
+        Server server = null;
+        try {
+            server = extract(response);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        server.setId(hostId);
+
+        return server;
+    }
+
+    private Server extract(MultiSearchResponse response) throws JsonProcessingException {
+        Server server = new Server();
+
+        MultiSearchResponse.Item[] responses = response.getResponses();
+        for (MultiSearchResponse.Item item : responses) {
+            SearchHits hits = item.getResponse().getHits();
+            for (SearchHit hit : hits) {
+                String sourceAsString = hit.getSourceAsString();
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode jsonNode = mapper.readTree(sourceAsString);
+                if (!jsonNode.findPath("cpu").isEmpty()) {
+                    JsonNode cpuNode = jsonNode.findPath("cpu");
+                    Cpu cpu = mapper.treeToValue(cpuNode, Cpu.class);
+                    System.out.println(cpu);
+                    server.setCpu(cpu);
+                }
+                if (!jsonNode.findPath("memory").isEmpty()) {
+                    JsonNode memNode = jsonNode.findPath("memory");
+                    Memory mem = mapper.treeToValue(memNode, Memory.class);
+                    System.out.println(mem);
+                    server.setMemory(mem);
+                }
+            }
+        }
+
+        return server;
     }
 }
