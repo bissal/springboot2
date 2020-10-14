@@ -1,6 +1,5 @@
 package io.bissal.spring.elastic.test.model.repository;
 
-import io.bissal.spring.elastic.test.model.entity.Post;
 import io.bissal.spring.elastic.test.model.entity.Switchover;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

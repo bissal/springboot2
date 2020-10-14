@@ -4,7 +4,7 @@ spring:
 #    driver-class-name: org.h2.Driver
 #    username: sa
 #    password:
-    url: jdbc:oracle:thin:@localhost:1521:xe
+    url: jdbc:oracle:thin:@20.194.16.231:49161:xe
     driver-class-name: oracle.jdbc.OracleDriver
     username: dev_user
     password: dev_user
@@ -14,8 +14,9 @@ spring:
   jpa:
     show-sql: true
     hibernate:
+      ddl-auto: update
 #      ddl-auto: create-drop
-      ddl-auto: none
+#      ddl-auto: none
       format_sql: true
   jackson:
     property-naming-strategy: SNAKE_CASE
