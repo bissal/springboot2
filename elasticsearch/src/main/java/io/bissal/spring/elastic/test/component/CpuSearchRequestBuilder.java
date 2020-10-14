@@ -11,6 +11,8 @@ import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class CpuSearchRequestBuilder {
     @Value("${search.index}")
@@ -21,6 +23,9 @@ public class CpuSearchRequestBuilder {
 
     @Value("${search.field.cpu}")
     private String cpu;
+
+    @Value("${search.include.cpu}")
+    private List<String> includeCpu;
 
     @Value("${search.range.field}")
     private String rangeField;
@@ -49,7 +54,7 @@ public class CpuSearchRequestBuilder {
                 .must(rangeQueryBuilder)
                 ;
 
-        String[] includeFields = new String[] {cpu};
+        String[] includeFields = includeCpu.toArray(new String[includeCpu.size()]);
         String[] excludeFields = new String[] {};
 
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();

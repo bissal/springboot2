@@ -23,17 +23,6 @@ spring:
 elasticsearch:
   hosts: http://20.194.41.183:9200
 
-search:
-  index: metricbeat-*
-  field:
-    id: host.id
-    cpu: system.cpu.total
-  range:
-    field: "@timestamp"
-    gte: now-10h/h
-    lte: now
-  sort: "@timestamp"
-
 logging:
   level:
     org:
@@ -44,3 +33,18 @@ logging:
 
 server:
   port: 8088
+
+search:
+  index: metricbeat-*
+  field:
+    id: host.id
+    cpu: system.cpu
+    mem: system.memory
+  include:
+    cpu: system.cpu.total
+    mem: system.memory.total,system.memory.used,system.memory.free
+  range:
+    field: "@timestamp"
+    gte: now-10h/h
+    lte: now
+  sort: "@timestamp"
