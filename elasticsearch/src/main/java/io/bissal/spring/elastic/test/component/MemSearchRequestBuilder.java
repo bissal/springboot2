@@ -1,5 +1,6 @@
 package io.bissal.spring.elastic.test.component;
 
+import io.bissal.spring.elastic.test.config.SearchProperties;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.ExistsQueryBuilder;
@@ -8,10 +9,14 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortOrder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MemSearchRequestBuilder {
+    @Autowired
+    private SearchProperties properties;
+
     public SearchRequest searchRequest(String hostId) {
         MatchQueryBuilder matchQuery = QueryBuilders.matchQuery("host.id", hostId);
         ExistsQueryBuilder existsQuery = QueryBuilders.existsQuery("system.memory");
@@ -36,7 +41,7 @@ public class MemSearchRequestBuilder {
         sourceBuilder.size(1);
         sourceBuilder.sort("@timestamp", SortOrder.DESC);
 
-        SearchRequest request = new SearchRequest("metricbeat-*");
+        SearchRequest request = new SearchRequest(properties.getIndex());
         request.source(sourceBuilder);
 
         return request;
